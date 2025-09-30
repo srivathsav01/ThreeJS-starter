@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-
+import { gsap } from 'gsap'
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -7,7 +7,7 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 const group = new THREE.Group()
-group.scale.y = 2
+group.scale.y = 1
 // group.rotation.y = Math.PI * 0.25
 group.rotation.x = Math.PI * 0.25
 scene.add(group)
@@ -62,5 +62,27 @@ renderer.setSize(sizes.width, sizes.height)
 const axesHelper = new THREE.AxesHelper(2)
 scene.add(axesHelper)
 
-renderer.render(scene, camera)
+// Animation
+let time = Date.now()
+
+// animation can also be done using gsap but not in loop, just once ( for now )
+// gsap.to(group.position, { duration: 1, delay: 1, x: 2 })
+// gsap.to(group.position, { duration: 1, delay: 2, x: -2 })
+
+const tick = () => {
+    const currentTime = Date.now()
+    const deltaTime = currentTime - time
+    time = currentTime
+
+    group.position.y = Math.sin(time * 0.001)
+    group.position.x = Math.cos(time * 0.001) // sin and cos to make motion like a loop
+    group.rotation.y += 0.0005 * deltaTime // multiplying by deltatime to to make rotation frame rate independent
+    
+    renderer.render(scene, camera)
+    window.requestAnimationFrame(tick)
+}
+
+tick()
+
+
 
